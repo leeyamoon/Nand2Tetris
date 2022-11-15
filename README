@@ -1,0 +1,10 @@
+The project was done by Leeyam Gabay & Omer Ben Moshe.
+
+                        
+						
+						Guidelines for running the files
+                        --------------------------------
+HDL files - run with the Hardware Simulator
+ASM files - run with the CPU Emulator
+VM files - run with the VM Emulator
+JACK files - run with the Compiler

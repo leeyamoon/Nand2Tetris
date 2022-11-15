@@ -1,0 +1,36 @@
+leeyam,omer.benmoshe
+===============================================================================
+Leeyam Gabay, ID 207768599, leeyam.gabay@mail.huji.ac.il
+Omer Ben Moshe, ID 209178136, omer.benmoshe@mail.huji.ac.il
+===============================================================================
+
+                           Project 7 - Virtual Machine (Arithmetic)
+                           ----------------------------------------
+  
+
+Submitted Files
+---------------
+README - This file.
+VMtranslator - The executable.
+Makefile - A makefile for the project.
+Main.py - The main VMtranslator program
+Include other files required by your project, if there are any.
+
+Remarks
+-------
+* In this project we have decided to work according to our own API so here's a short summary of each function
+* arithmetic_dict contains all of the arithmetic commands such as add, sub and etc and translates them in to their assembly implementation
+* bool_dict contains all the boolean based commands (eq,gt adn lt) and translates them in to their assembly implementation
+* push_pop_lcl_dict contains the push and pop commands and translates them to their assembly implementation
+* first_type_seg dictionary contains all the possible statments and their assembly implementation
+* cons_type_seg contains the implementation of the push constant command
+* static_dict contains the implementation of the assembly commands of static variables(push and pop)
+* temp_dict contains the implementation of the assembly commands of temp variables(push and pop)
+* pointer_dict contains the implementation of the assembly commands of pointer variables(push and pop)
+* counter_dict is a dict that works as a counter in order to place all the labels in the right place in the memory(16th ram and onwards)
+* the remove_all_useless function removes all the blank spaces and comments from the file
+* arith_log_translate is a function that receives an arithmetic command and translates it to assembly code
+* memory_translator receives a memory type command (such as contants or static  variables) and translates it to assembly code
+* the kind_of_command function receives a vm code command and determinates what kind of command is the command(memory type or arithmetic type)
+* and calls the corresponding function
+* the translator function receives a vm file or a directory of files and tranltes the files to an assembly code file 

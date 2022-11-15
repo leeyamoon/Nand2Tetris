@@ -1,0 +1,219 @@
+// This file is part of nand2tetris, as taught in The Hebrew University,
+// and was written by Aviv Yaish, and is published under the Creative 
+// Common Attribution-NonCommercial-ShareAlike 3.0 Unported License 
+// https://creativecommons.org/licenses/by-nc-sa/3.0/
+// It is an extension to the specifications given in  
+// https://www.nand2tetris.org (Shimon Schocken and Noam Nisan, 2017)
+// as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0 
+// File name: projects/12/Screen.jack
+
+/**
+ * A library of functions for displaying graphics on the screen.
+ * The Hack physical screen consists of 256 rows (indexed 0..255, top to bottom)
+ * of 512 pixels each (indexed 0..511, left to right). The top left pixel on 
+ * the screen is indexed (0,0).
+ */
+class Screen {
+  static int baseAddr, lastAddr;
+  static boolean curColor;
+  static Array bits;
+
+  /** Initializes the Screen. */
+  function void init() {
+    var int x, i;
+    let curColor = true;
+    let baseAddr = 16384;
+    let lastAddr = 24576;
+    let bits = Array.new(16);
+    let x = 1;
+    let i =0;
+    while (i<16){
+      let bits[i] = x;
+      let x = ^x;
+      let i = i+1;
+    }
+    return;
+  }
+
+  /** Erases the entire screen. */
+  function void clearScreen() {
+    var int addr;
+    let addr = baseAddr;
+    while(addr<lastAddr){
+      do Memory.poke(addr,0);
+      let addr = addr+1;
+    }
+    return;
+  }
+
+  /** Sets the current color, to be used for all subsequent drawXXX commands.
+    *  Black is represented by true, white by false. */
+  function void setColor(boolean b) {
+    let curColor = b;
+    return;
+  }
+
+  /** Draws the (x,y) pixel, using the current color. */
+  function void drawPixel(int x, int y) {
+	  // For this function, you will need to calculate the value x%16.
+	  // It should be calculated quickly without using multiplication or
+	  // division, using exactly one basic math/logical operation.
+	  // In addition, calculating 16384 + y * 32 + x/16 should not use
+	  // division or multiplication.
+    var int xmod,addry, addrx,addr, value, bit;
+    if(~(Screen.validCord(x,y))){
+      do Sys.error(7);
+    }
+    let xmod = x&15;
+    let addry = ^(^(^(^(^y))));
+    let addrx = #(#(#(#x)));
+    let addr = addry + addrx;
+    let value = Memory.peek(baseAddr + addr);
+    if(curColor){
+      let bit = bits[xmod]|value;
+    }
+    else{
+      let bit = (~bits[xmod]) & value;
+    }
+    do Memory.poke(baseAddr + addr,bit);
+    return;
+  }
+
+  /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
+  function void drawLine(int x1, int y1, int x2, int y2) {
+		// The case where x1 != x2 and y1 != y2 should be implemented without
+		// multiplication or division.
+		// Also, the case where y1 == y2 can be implemented efficiently by
+		// trying to draw as many pixels as possible in a single assignment,
+		// similarly to Fill in project 4.
+    var int a,b,diff,dx,dy,i,addr, xmod, bit, temp,minV, maxV;
+    if((~(Screen.validCord(x1,y1)))|(~(Screen.validCord(x2,y2)))){
+      do Sys.error(8);
+    }
+    let a = 0;
+    let b = 0;
+    let diff = 0;
+    let dx = x2-x1;
+    let dy = y2-y1;
+    if(dx = 0){
+      // draws vertical lines
+      let a = Math.abs(dy);
+      let b = Math.min(y1,y2);
+      let i = 0;
+      while(~(i>a)){
+        do Screen.drawPixel(x1,b+i);
+        let i = i+1;
+      }
+    }
+    else{
+      // draws horizontal lines
+      if(dy = 0){
+        let a = Math.abs(dx);
+        let b = Math.min(x1,x2);
+        let xmod = b&15;
+        let i = 0;
+        let temp = (i+b)&15=0;
+        while((~(i>a))&(~((i+b)&15=0))){
+          do Screen.drawPixel(b+i,y1);
+          let i = i+1;
+        }
+        while(~((i+16)>a)){
+          let addr = (^(^(^(^(^y1)))))+(#(#(#(#(x1+i)))))+baseAddr;
+          do Memory.poke(addr, curColor);
+          let i = i+16;
+        }
+        while(~(i>a)){
+          do Screen.drawPixel(b+i,y1);
+          let i = i+1;
+        }
+      }  
+      else{
+        if ((dx<0&dy<0)|(dx>0&dy<0)){
+          // up left or up right
+          let temp = x2;
+          let x2 = x1;
+          let x1 = temp;
+          let temp = y2;
+          let y2 = y1;
+          let y1 = temp;
+          let dy = y2 - y1;
+          let dx = x2 - x1;
+        }
+        if((dy>0)&(dx>0)){
+          while((~(a>dx))&(~(b>dy))){
+            do Screen.drawPixel(x1+a,y1+b);
+            if (diff<0){
+              let a = a+1;
+              let diff = diff+dy;
+            }
+            else{
+              let b = b+1;
+              let diff = diff - dx;
+            }
+          }
+        }
+        else{
+          // down left
+          while((~(a<dx))&(~(b>dy))){
+            do Screen.drawPixel(x1+a,y1+b);
+            if (diff<0){
+              let a = a-1;
+              let diff = diff+dy;
+            }
+            else{
+              let b = b+1;
+              let diff = diff + dx;
+            }
+          }
+        }
+      }
+    }
+    return;
+  }
+
+
+  /** Draws a filled rectangle whose top left corner is (x1, y1)
+  * and bottom right corner is (x2,y2), using the current color. */
+  function void drawRectangle(int x1, int y1, int x2, int y2) {
+    var int i;
+    var int a,b,diff,dx,dy,i,addr, xmod, bit, temp,minV, maxV;
+    if((~Screen.validCord(x1,y1))|(~Screen.validCord(x2,y2))){
+      do Sys.error(9);
+    }
+    let i = y1;
+    while(~(i>y2)){
+      do Screen.drawLine(x1,i,x2,i);
+      let i = i+1;
+    }
+    return;
+  }
+
+  /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
+  function void drawCircle(int x, int y, int r) {
+    var int dy, fixedr,pita,rPow, dyPow;
+    var int a,b,diff,dx,dy,i,addr, xmod, bit, temp,minV, maxV;
+    if((~Screen.validCord(x-r,y-r))|(~Screen.validCord(x+r,y+r))){
+      do Sys.error(12);
+    }
+    if(r<0){
+      do Sys.error(13);
+    }
+    let fixedr = Math.min(181,r);
+    let dy = -fixedr;
+    while(~(dy = r)){
+      let rPow = fixedr*fixedr;
+      let dyPow = dy*dy;
+      let pita = Math.sqrt(rPow-dyPow);
+      do Screen.drawLine(x-pita, y+dy,x+pita,y+dy);
+      let dy = dy+1;
+    }
+    return;
+  }
+
+  function boolean validCord(int x, int y){
+    if((~(x>(-1) & x <512))|(~(y>(-1)& y<256))){
+      return false;
+    }
+    return true;
+  }
+}

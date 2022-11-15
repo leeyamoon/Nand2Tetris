@@ -1,0 +1,31 @@
+leeyam,omer.benmoshe
+===============================================================================
+Leeyam Gabay, ID 207768599, leeyam.gabay@mail.huji.ac.il
+Omer Ben Moshe, ID 209178136, omer.benmoshe@mail.huji.ac.il
+===============================================================================
+
+                           Project 6 - Project Title
+                           -------------------------
+  
+
+Submitted Files
+---------------
+README - This file.
+Makefile - the Makefile file
+Assembler.py - the python file containing the assmebler
+Assembler - the file that runs the program itself
+
+Remarks
+-------
+* in the assmebler file we have decided to do our own API, and so here we will give a short summery of each function.
+* the main way of our way to translate from assembly to hack language is done through python dictionaries
+* dest_dict contains all the possible destinations, meaning the A regestier or the D register and etc
+* comp_dict contains all the legal compositions in assembly meaning compositions such as  "D-A" and etc
+* jump_dict contains all the possible jump commands such as JLT,JMP and etc
+* var_dict contains all the variables, both pre defined such as R0 and also new variables that are named by the user
+* the function convert_to_bin receieves an a command such as @8 and converts it to binary and adds the proper amounts of zeros to make it a 16 bit binary line
+* the type_one_to_bin diffrenciates between all the differnt type of commands and translates them in to hack language
+* the remove_all_useless function receives the original assembly file and removes all the blank spaces and the comments 
+* the pre_run function receieves and opens the assembly file and adds all the user's variables such as loop to the var_dict
+* the translate_one_file function receives a single assembly file name and translates it to hack language
+* the assmebler function receieves a file name or path and it uses the translate_one_file function to translate each file to hack language  

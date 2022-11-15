@@ -1,0 +1,29 @@
+leeyam,omer.benmoshe
+===============================================================================
+Leeyam Gabay, ID 207768599, leeyam.gabay@mail.huji.ac.il
+Omer Ben Moshe, ID 209178136, omer.benmoshe@mail.huji.ac.il
+===============================================================================
+
+                           Project 10 - Compilation
+                           ------------------------
+  
+
+Submitted Files
+---------------
+README - This file.
+JackAnalyzer - The executable.
+Makefile - A makefile for the project.
+JackAnalyzer.py - receives a directory or a file and creats an xml file for each file receieved 
+JackTokenizer.py -  receives a jack file and removes all comments and whitespaces and creats the tokens
+CompilationEngine.py - receives the file calls the tokenizer and wrapps each token with the right description
+Include other files required by your project, if there are any.
+
+Remarks
+-------
+* we added 3 main functions to the tokenizer
+* the first function is create_processed_tokens which calls other smaller functions each does a different part of cleaning the file and creating the tokens
+* the second function is get_cur_token which returns the value of the current token
+* the third function is get_next_token is a function that returns the value of the upcoming token, this function comes in handy when compiling in the CompilationEngine
+* we added to the CompilationEngine 2 functions
+* the first function is write token which writes the current token to the output file and advances the token
+* the second function is compile_subroutine_body which compiles a subroutine body statement 

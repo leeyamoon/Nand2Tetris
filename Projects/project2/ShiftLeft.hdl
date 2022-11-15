@@ -1,0 +1,20 @@
+// This file is part of nand2tetris, as taught in The Hebrew University,
+// and was written by Aviv Yaish, and is published under the Creative 
+// Common Attribution-NonCommercial-ShareAlike 3.0 Unported License 
+// https://creativecommons.org/licenses/by-nc-sa/3.0/
+
+CHIP ShiftLeft{
+    IN in[16];
+    OUT out[16];
+     
+    PARTS:
+	Not16(in = in, out[0] = oneout0, out[1] = oneout1, out[2] = oneout2,
+	out[3] = oneout3,out[4] = oneout4,out[5] = oneout5,out[6] = oneout6,out[7] = oneout7,
+	out[8] = oneout8,out[9] = oneout9,out[10] = oneout10,out[11] = oneout11,
+	out[12] = oneout12,out[13] = oneout13,out[14] = oneout14,
+	out[15] = oneout15);
+	Not16 (in[0] = true, in[1] = oneout0, in[2] = oneout1, in[3] = oneout2,
+	in[4] = oneout3, in[5] = oneout4, in[6] = oneout5, in[7] = oneout6,
+	in[8] = oneout7, in[9] = oneout8, in[10] = oneout9, in[11] = oneout10,
+	in[12] = oneout11, in[13] = oneout12, in[14] = oneout13, in[15] = oneout14, out = out);
+}

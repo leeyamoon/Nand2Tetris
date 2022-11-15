@@ -1,0 +1,158 @@
+// This file is part of nand2tetris, as taught in The Hebrew University,
+// and was written by Aviv Yaish, and is published under the Creative 
+// Common Attribution-NonCommercial-ShareAlike 3.0 Unported License 
+// https://creativecommons.org/licenses/by-nc-sa/3.0/
+// It is an extension to the specifications given in  
+// https://www.nand2tetris.org (Shimon Schocken and Noam Nisan, 2017)
+// as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0 
+// File name: projects/12/Math.jack
+
+/**
+ * A library of commonly used mathematical functions.
+ * Note: Jack compilers implement multiplication and division using OS method calls.
+ */
+class Math {
+  static Array bits;
+  static int forDiv;
+
+    /** Initializes the library. */
+    function void init() {
+      var int i, x;
+      let bits = Array.new(16);
+      let x = 1;
+      let i =0;
+      while (i<16){
+        let bits[i] = x;
+        let x = ^x;
+        let i = i+1;
+      }
+      return;
+    }
+
+    /** Returns the absolute value of x. */
+    function int abs(int x) {
+      var int y;
+      let y = x;
+      if (y<0){
+        let y=-y; 
+      }
+      return y;
+    }
+
+
+    /** Returns the product of x and y. 
+     *  When a Jack compiler detects the multiplication operator '*' in the 
+     *  program's code, it handles it by invoking this method. In other words,
+     *  the Jack expressions x*y and multiply(x,y) return the same value.
+     */
+    function int multiply(int x, int y) {
+      var int sum, shftX, i, minus;
+      let minus = 1;
+      let sum = 0;
+      let shftX = Math.abs(x);
+      let i = 0;
+      if (((x>0)&(y<0))|((x<0)&(y>0))){
+        let minus = -1;
+      }
+
+      while(i<16){
+        if (Math.bitty(Math.abs(y), i)){
+          let sum = sum + shftX;
+        }
+        let shftX = ^shftX;
+        let i = i+1;
+      }
+      if (minus = -1){
+        let sum = -sum;
+      }
+      return sum;
+    }
+
+    /** Returns the integer part of x/y.
+     *  When a Jack compiler detects the multiplication operator '/' in the 
+     *  program's code, it handles it by invoking this method. In other words,
+     *  the Jack expressions x/y and divide(x,y) return the same value.
+     */
+    function int divide(int x, int y) {
+		// This should be implemented without using multiplication.
+		// Hint: updating the value of 2*q*y in the "if" statement requires
+		// at most a single addition operator at every recursion step.
+    var int minus, div;
+    if(y=0){
+      do Sys.error(3);
+    }
+    let forDiv = 0;
+    let minus = 1;
+    if (((x>0)&(y<0))|((x<0)&(y>0))){
+        let minus = -1;
+    }
+    let div = Math.div_help(Math.abs(x), Math.abs(y));
+    if (minus = -1){
+      let div = -div;
+    }
+    return div;
+    }
+
+    function int div_help(int x, int y){
+      var int q;
+      if (y>x){
+        return 0 ;
+      }
+      if (y>16383){
+        return 1;
+      }
+      let q = Math.div_help(x, ^y);
+      if (x-forDiv<y){
+        return ^q;
+      }
+      else{
+        let forDiv = forDiv +y;
+        return ^q+1;
+      }
+    }
+
+    /** Returns the integer part of the square root of x. */
+    function int sqrt(int x) {
+		// This should be implemented without using division, but
+		// multiplication is allowed.
+    var int j, y,i,pow,root;
+    if(x<0){
+      do Sys.error(4);
+    }
+    let j = 7;
+    let y = 0;
+    while((j>0)|(j=0)){
+      let i = 0;
+      let pow = 1;
+      while(j>i){
+        let pow = ^pow;
+        let i = i+1;
+      }
+      let root = (y+pow)*(y+pow);
+      if (((root<x)|(root = x))& root>0){
+        let y = y+pow;
+      }
+      let j = j-1;
+    }
+    return y;
+    }
+
+    /** Returns the greater number. */
+    function int max(int a, int b) {
+      if(a>b){
+        return a;
+      }
+      return b;
+    }
+
+    /** Returns the smaller number. */
+    function int min(int a, int b) {
+       if(a>b){
+        return b;
+      }
+      return a;
+    }
+    function boolean bitty(int x, int i){
+      return (x&bits[i]);
+    }
+}
